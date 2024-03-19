@@ -15,8 +15,7 @@ class Product(models.Model):
     name = models.CharField(max_length=250, null=True, blank=True)
     image = models.ImageField(null=True, blank=True, default='/placeholder.jpg')
     brand = models.CharField(max_length=250, null=True, blank=True)
-    # category = models.CharField(max_length=250, null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.CharField(max_length=250, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     rating = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
@@ -31,6 +30,18 @@ class Product(models.Model):
         return self.name
 
 
+class Review(models.Model):
+    # relationship to the Product
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True) # parent-child relationship
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    name = models.CharField(max_length=250, null=True, blank=True)
+    rating = models.IntegerField(null=True, blank=True, default=0)
+    comment = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    _id = models.AutoField(primary_key=True, editable=False)
+
+    def __str__(self):
+        return str(self.rating)
 
 
 class Order(models.Model):
@@ -81,7 +92,3 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return self.address
-
-class User(models.Model):
-    username = models.CharField(max_length=100)
-    email = models.EmailField()
